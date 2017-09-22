@@ -30,4 +30,3 @@ var Chat;
 // export const Chat = mkenum3('chat:connect', 'chat:message');
 // export type  Chat = TT<typeof Chat>;
 // export type  Chat = enumType<typeof Chat>;
-//# sourceMappingURL=/home/akeenan/projects/newyoc/server/shared/constants/sockets/chat.js.map

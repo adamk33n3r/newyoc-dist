@@ -4,4 +4,3 @@ function __export(m) {
 }
 __export(require("./chat"));
 __export(require("./stream"));
-//# sourceMappingURL=/home/akeenan/projects/newyoc/server/shared/constants/sockets/index.js.map
