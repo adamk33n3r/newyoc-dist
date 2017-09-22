@@ -12,7 +12,6 @@ const request = require("request-promise-native");
 const routing_1 = require("src/decorators/routing");
 const util_1 = require("src/decorators/util");
 const config_1 = require("src/config");
-console.log(config_1.default);
 let MinerController = class MinerController {
     payout(req, res) {
         this.coinHiveForwarder('stats/payout', res);
