@@ -1,0 +1,7 @@
+#!/bin/bash
+
+git fetch
+git checkout origin/master
+cd server
+yarn
+sudo systemctl restart yoc
