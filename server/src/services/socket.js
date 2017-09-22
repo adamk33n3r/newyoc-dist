@@ -1,7 +1,7 @@
 "use strict";
 const logger_1 = require("src/logger");
 const request = require("request-promise-native");
-const sockets_1 = require("../../../shared/constants/sockets");
+const sockets_1 = require("../../shared/constants/sockets");
 class Socket {
     constructor(socket) {
         this.socket = socket;
