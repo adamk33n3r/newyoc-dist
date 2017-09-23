@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ssh gcloud "cd ~/projects/newyoc-dist; ./deploy"
