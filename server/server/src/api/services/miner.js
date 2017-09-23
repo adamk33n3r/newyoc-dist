@@ -12,7 +12,6 @@ const request = require("request-promise-native");
 const routing_1 = require("src/decorators/routing");
 const util_1 = require("src/decorators/util");
 const config_1 = require("src/config");
-console.log(config_1.default);
 let MinerController = class MinerController {
     payout(req, res) {
         this.coinHiveForwarder('stats/payout', res);
@@ -21,14 +20,18 @@ let MinerController = class MinerController {
         this.coinHiveForwarder('stats/site', res);
     }
     balance(req, res) {
-        this.coinHiveForwarder('user/balance', res, { name: req.query.user });
+        this.coinHiveForwarder('user/balance', res, { name: req.query.user }, (response) => {
+            response.balance = response.balance / 100;
+            return response;
+        });
     }
-    coinHiveForwarder(endpoint, res, params = {}) {
+    coinHiveForwarder(endpoint, res, params = {}, then = response => response) {
         params.secret = config_1.default.coinhive.secret;
-        request.get(`https://api.coin-hive.com/${endpoint}`, {
+        return request.get(`https://api.coin-hive.com/${endpoint}`, {
             qs: params,
             json: true,
         })
+            .then(then)
             .then((response) => {
             res.send(response);
         });
