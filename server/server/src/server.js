@@ -8,6 +8,7 @@ const errorHandler = require("errorhandler");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 require("reflect-metadata");
+const Table = require('cli-table');
 const socket_1 = require("./services/socket");
 const jobs_1 = require("./jobs");
 // routes
@@ -45,7 +46,9 @@ class Server {
      * @method config
      */
     config(socket) {
-        new socket_1.Socket(socket);
+        if (socket) {
+            new socket_1.Socket(socket);
+        }
         // Add static paths
         this.app.use(express.static('./src/public'));
         // Mount logger
@@ -75,7 +78,15 @@ class Server {
         this.app.use(errorHandler());
         this.routes();
         // Jobs
-        jobs_1.Jobs.init();
+        if (socket) {
+            jobs_1.Jobs.init();
+        }
+    }
+    printRoutes() {
+        const stack = this.app._router.stack;
+        const table = new Table({ head: ['VERB', 'PATH', 'METHOD'] });
+        this.getRoutesFromStack(stack, table);
+        console.log(table.toString());
     }
     /**
      * Create and return Router.
@@ -90,9 +101,30 @@ class Server {
         this.app.use(routePath, router);
         const pathToClient = path.join(__dirname, '../../../client/src');
         this.app.use(express.static(pathToClient));
-        this.app.get('*', (req, res) => {
+        // tslint:disable-next-line
+        this.app.get('*', function catchAll(req, res) {
             res.sendFile(path.join(pathToClient, 'index.html'));
         });
+    }
+    getRoutesFromStack(stack, table, path = '') {
+        for (const layer of stack) {
+            if (layer.name === 'router') {
+                // console.log(layer, layer.regexp, layer.handle.stack);q
+                // console.log(layer.)
+                let routerPath = layer.regexp.toString();
+                routerPath = routerPath
+                    .replace('/^', '')
+                    .replace('\\/?(?=\\/|$)/i', '')
+                    .replace('\\/', '/');
+                this.getRoutesFromStack(layer.handle.stack, table, path + routerPath);
+            }
+            else if (layer.route) {
+                const methodName = layer.route.stack[0].handle.name.replace('bound ', '');
+                const httpMethod = layer.route.stack[0].method.toUpperCase();
+                const fullPath = path + layer.route.path;
+                table.push([httpMethod, fullPath, methodName]);
+            }
+        }
     }
 }
 Server.MONGODB_CONNECTION = 'mongodb://eon.adam-keenan.net:27272/newyoc';

@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 // Routes
 const services_1 = require("./services");
+const miner_1 = require("./miner");
 const routing_1 = require("src/decorators/routing");
 let AppRouter = class AppRouter {
 };
@@ -18,6 +19,9 @@ AppRouter = __decorate([
         path: '/api',
         routers: [
             services_1.default,
+        ],
+        controllers: [
+            miner_1.default,
         ],
     }),
     __metadata("design:paramtypes", [])

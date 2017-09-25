@@ -12,7 +12,6 @@ const teamspeak_1 = require("./teamspeak");
 const slack_1 = require("./slack");
 const stream_1 = require("./stream");
 const api_ai_1 = require("./api-ai");
-const miner_1 = require("./miner");
 const routing_1 = require("src/decorators/routing");
 let ServicesRouter = class ServicesRouter {
 };
@@ -24,7 +23,6 @@ ServicesRouter = __decorate([
             slack_1.default,
             stream_1.default,
             api_ai_1.default,
-            miner_1.default,
         ],
     }),
     __metadata("design:paramtypes", [])

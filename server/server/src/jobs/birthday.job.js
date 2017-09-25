@@ -1,13 +1,14 @@
 "use strict";
 const request = require("request-promise-native");
+const logger_1 = require("src/logger");
 const slack_1 = require("../services/slack");
 const config_1 = require("../config");
 const ManagementClient = require('auth0').ManagementClient;
 module.exports = (scheduler) => {
     const slack = new slack_1.Slack();
-    console.log('scheduling birthday job');
+    logger_1.default('scheduling birthday job');
     scheduler.scheduleJob('0 0 9 * * *', () => {
-        console.log('birthday job running...');
+        logger_1.default('birthday job running...');
         if (!(config_1.default.auth0 && config_1.default.auth0.client_id && config_1.default.auth0.client_secret)) {
             console.error('no auth0 config can\'t send birthday messages');
             return;

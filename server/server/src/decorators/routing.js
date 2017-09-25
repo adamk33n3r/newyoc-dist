@@ -22,7 +22,6 @@ function Router(info) {
         Reflect.defineMetadata('$router.path', info.path, target.prototype);
         // Create router
         const expressRouter = express_1.Router();
-        debug('erouter', expressRouter);
         // Attach controllers to router
         if (info.controllers) {
             debug('registering controllers to', info.path);
@@ -33,7 +32,7 @@ function Router(info) {
                 debug(path);
                 for (const routeInfo of routes) {
                     const controllerMethod = controller[routeInfo.propertyKey];
-                    debug(`router at ${path} is calling .${routeInfo.method}('${routeInfo.path}', ${controllerMethod.name})`);
+                    debug(`controller router at ${path} is calling .${routeInfo.method}('${routeInfo.path}', ${controllerMethod.name})`);
                     controllerRouter[routeInfo.method](routeInfo.path, controllerMethod.bind(controller));
                 }
                 debug(`router at ${info.path} is calling .use('${path}', controllerRouter)`);
