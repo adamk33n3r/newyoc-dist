@@ -1,5 +1,6 @@
 "use strict";
 const request = require("request-promise-native");
+const moment = require("moment");
 const logger_1 = require("src/logger");
 const slack_1 = require("../services/slack");
 const config_1 = require("../config");
@@ -28,26 +29,29 @@ module.exports = (scheduler) => {
                 token: response.access_token,
                 domain: 'adamk33n3r.auth0.com',
             });
-            const date = new Date();
-            const today = `${date.getMonth() + 1}/${date.getDate()}`;
-            const todayPad = `0${date.getMonth() + 1}/${date.getDate()}`;
+            const today = moment();
             management.getUsers()
                 .then((users) => {
                 return users.filter((user) => {
-                    return user.user_metadata.birthday.startsWith(today) || user.user_metadata.birthday.startsWith(todayPad);
+                    const birthday = moment(user.user_metadata.birthday, [
+                        'MM/DD/YYYY',
+                        'MM/DD',
+                    ]);
+                    birthday.year(today.year());
+                    return birthday.isSame(today, 'day');
                 });
             })
                 .then((users) => {
                 if (users.length === 0) {
-                    console.log('No birthdays today :(');
+                    console.log('BIRTHDAYS: No birthdays today :(');
                     return;
                 }
                 for (const user of users) {
                     const meta = user.user_metadata;
                     const name = meta.slack || meta.name || `${meta.given_name} ${meta.family_name}` || user.name;
-                    console.log('Birthday boy:', name, meta.birthday);
+                    console.log('BIRTHDAYS: Birthday boy:', name, meta.birthday);
                     slack.sendMessage(config_1.default.slack.webhook, {
-                        channel: '#tcpi',
+                        channel: config_1.default.birthdayChannel,
                         text: `:tada::confetti_ball::birthday: Happy Birthday to ${name}!!! :birthday::confetti_ball::tada:`,
                     });
                 }

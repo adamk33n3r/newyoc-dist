@@ -1,4 +1,10 @@
 "use strict";
+function renameFunction(fn, newName, args = {}) {
+    const renamedFunction = fn.toString().replace(/function \w+/, 'function ' + newName);
+    const argNames = Object.keys(args);
+    const argVals = argNames.map(argName => args[argName]);
+    return new Function(...argNames, 'return ' + renamedFunction)(...argVals);
+}
 /**
  * Checks the request body for token. Responds with 404 if not equal
  */
@@ -16,8 +22,7 @@ function CheckToken(token) {
             }
         };
         // Rename function to original
-        const renamedFunction = descriptor.value.toString().replace('function checkToken', 'function ' + origFn.name);
-        descriptor.value = new Function('return ' + renamedFunction)();
+        descriptor.value = renameFunction(descriptor.value, origFn.name, { origFn, token });
     };
 }
 exports.CheckToken = CheckToken;
@@ -38,8 +43,7 @@ function Required(...params) {
             }
         };
         // Rename function to original
-        const renamedFunction = descriptor.value.toString().replace('function required', 'function ' + origFn.name);
-        descriptor.value = new Function('return ' + renamedFunction)();
+        descriptor.value = renameFunction(descriptor.value, origFn.name, { origFn, params });
     };
 }
 exports.Required = Required;
