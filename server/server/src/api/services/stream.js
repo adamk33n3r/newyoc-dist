@@ -29,7 +29,7 @@ let StreamController = class StreamController {
                     const title = req.body.title || 'something';
                     this.slack.sendMessage(config_1.default.slack.webhook, {
                         channel: channel || '#random',
-                        text: `${who} started streaming *${title}*!\nCome join the party: https://yoc.gg/stream\nChat in a thread I guess cause RIP chat.`,
+                        text: `${who} started streaming *${title}*!\nCome join the party: https://yoc.gg/stream\nChat in #stream`,
                     });
                 }
                 break;
