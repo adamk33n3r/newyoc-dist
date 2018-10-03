@@ -54,8 +54,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TeamSpeakController.prototype, "index", null);
 TeamSpeakController = __decorate([
-    routing_1.Controller('/teamspeak'),
-    __metadata("design:paramtypes", [])
+    routing_1.Controller('/teamspeak')
 ], TeamSpeakController);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new TeamSpeakController();

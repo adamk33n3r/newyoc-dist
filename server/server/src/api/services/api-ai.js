@@ -54,8 +54,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ApiAIController.prototype, "index", null);
 ApiAIController = __decorate([
-    routing_1.Controller('/api-ai'),
-    __metadata("design:paramtypes", [])
+    routing_1.Controller('/api-ai')
 ], ApiAIController);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new ApiAIController();

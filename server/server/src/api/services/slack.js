@@ -144,8 +144,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SlackController.prototype, "sendInvite", null);
 SlackController = __decorate([
-    routing_1.Controller('/slack'),
-    __metadata("design:paramtypes", [])
+    routing_1.Controller('/slack')
 ], SlackController);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new SlackController();

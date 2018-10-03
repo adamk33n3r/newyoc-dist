@@ -17,6 +17,12 @@ function camelToKebab(name) {
         return matches[0] + '-' + matches[1].toLowerCase();
     });
 }
+function renameFunction(fn, newName, args = {}) {
+    const renamedFunction = fn.toString().replace(/function \w+/, 'function ' + newName);
+    const argNames = Object.keys(args);
+    const argVals = argNames.map(argName => args[argName]);
+    return new Function(...argNames, 'return ' + renamedFunction)(...argVals);
+}
 function Router(info) {
     return (target) => {
         Reflect.defineMetadata('$router.path', info.path, target.prototype);
@@ -33,7 +39,15 @@ function Router(info) {
                 for (const routeInfo of routes) {
                     const controllerMethod = controller[routeInfo.propertyKey];
                     debug(`controller router at ${path} is calling .${routeInfo.method}('${routeInfo.path}', ${controllerMethod.name})`);
-                    controllerRouter[routeInfo.method](routeInfo.path, controllerMethod.bind(controller));
+                    // If a response wasn't sent (function just returned) then send one.
+                    function sendByDefault(req, res) {
+                        controllerMethod.call(controller, req, res);
+                        if (!res.headersSent) {
+                            res.send();
+                        }
+                    }
+                    const newFunc = renameFunction(sendByDefault, controllerMethod.name, { controllerMethod, controller });
+                    controllerRouter[routeInfo.method](routeInfo.path, newFunc);
                 }
                 debug(`router at ${info.path} is calling .use('${path}', controllerRouter)`);
                 expressRouter.use(path, controllerRouter);

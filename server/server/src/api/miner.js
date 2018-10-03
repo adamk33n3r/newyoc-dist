@@ -67,8 +67,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MinerController.prototype, "top", null);
 MinerController = __decorate([
-    routing_1.Controller('/miner'),
-    __metadata("design:paramtypes", [])
+    routing_1.Controller('/miner')
 ], MinerController);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new MinerController();
