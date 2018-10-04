@@ -40,14 +40,15 @@ function Router(info) {
                     const controllerMethod = controller[routeInfo.propertyKey];
                     debug(`controller router at ${path} is calling .${routeInfo.method}('${routeInfo.path}', ${controllerMethod.name})`);
                     // If a response wasn't sent (function just returned) then send one.
-                    function sendByDefault(req, res) {
-                        controllerMethod.call(controller, req, res);
-                        if (!res.headersSent) {
-                            res.send();
-                        }
-                    }
-                    const newFunc = renameFunction(sendByDefault, controllerMethod.name, { controllerMethod, controller });
-                    controllerRouter[routeInfo.method](routeInfo.path, newFunc);
+                    // NEVERMIND. Controller routes can be async so this res.send would happen first...BAD
+                    //function sendByDefault(req: Request, res: Response) {
+                    //    controllerMethod.call(controller, req, res);
+                    //    if (!res.headersSent) {
+                    //        res.send();
+                    //    }
+                    //}
+                    //const newFunc = renameFunction(sendByDefault, controllerMethod.name, { controllerMethod, controller });
+                    controllerRouter[routeInfo.method](routeInfo.path, controllerMethod.bind(controller));
                 }
                 debug(`router at ${info.path} is calling .use('${path}', controllerRouter)`);
                 expressRouter.use(path, controllerRouter);
