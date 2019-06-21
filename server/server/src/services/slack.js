@@ -21,6 +21,7 @@ class Slack {
             form: {
                 token,
                 email,
+                resend: true,
             },
         });
     }

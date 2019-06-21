@@ -55,6 +55,7 @@ let SlackController = class SlackController {
             }
             else {
                 console.error(response);
+                res.status(500).send(response);
             }
         })
             .catch((err) => {
