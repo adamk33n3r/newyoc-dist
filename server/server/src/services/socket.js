@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const logger_1 = require("src/logger");
 const request = require("request-promise-native");
 const sockets_1 = require("../../../shared/constants/sockets");

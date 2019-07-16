@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
@@ -6,11 +7,12 @@ const logger = require("morgan");
 const path = require("path");
 const errorHandler = require("errorhandler");
 const methodOverride = require("method-override");
-const mongoose = require("mongoose");
+const firebase = require("firebase");
 require("reflect-metadata");
 const Table = require('cli-table');
 const socket_1 = require("./services/socket");
 const jobs_1 = require("./jobs");
+const config_1 = require("./config");
 // routes
 const router_1 = require("./api/router");
 // interfaces
@@ -54,21 +56,19 @@ class Server {
         // Mount logger
         this.app.use(logger('dev'));
         // Mount json form parser
-        this.app.use(bodyParser.json());
+        // this.app.use(bodyParser.json());
+        this.app.use(bodyParser.json({
+            verify(req, res, buf) { req.rawBody = buf.toString(); },
+        }));
         // Mount query string parser
         this.app.use(bodyParser.urlencoded({
+            verify(req, res, buf) { req.rawBody = buf.toString(); },
             extended: true,
         }));
         // Mount cookie parker
         this.app.use(cookieParser('i am so secret'));
         // Mount override
         this.app.use(methodOverride());
-        // Use native promises
-        mongoose.Promise = Promise;
-        // Connect to mongoose
-        // const connection: mongoose.Connection = mongoose.createConnection(Server.MONGODB_CONNECTION);
-        // Create models
-        // this.model.user = connection.model<IUserModel>('User', userSchema);
         // Catch 404 and forward to error handler
         this.app.use((err, req, res, next) => {
             err.status = 404;
@@ -81,6 +81,17 @@ class Server {
         if (socket) {
             jobs_1.Jobs.init();
         }
+        // Firebase
+        firebase.initializeApp({
+            projectId: config_1.default.firebase.projectId,
+            databaseURL: config_1.default.firebase.databaseURL,
+            storageBucket: config_1.default.firebase.storageBucket,
+            locationId: config_1.default.firebase.locationId,
+            apiKey: config_1.default.firebase.apiKey,
+            authDomain: config_1.default.firebase.authDomain,
+            messagingSenderId: config_1.default.firebase.messagingSenderId,
+            appId: config_1.default.firebase.appId,
+        });
     }
     printRoutes() {
         const stack = this.app._router.stack;

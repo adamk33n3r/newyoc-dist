@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request-promise-native");
 const routing_1 = require("src/decorators/routing");
 const util_1 = require("src/decorators/util");
@@ -69,5 +70,4 @@ __decorate([
 MinerController = __decorate([
     routing_1.Controller('/miner')
 ], MinerController);
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new MinerController();

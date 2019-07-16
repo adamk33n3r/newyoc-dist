@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const glob = require("glob");
 const schedule = require("node-schedule");

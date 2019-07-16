@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Chat;
 (function (Chat) {
     Chat.Connect = 'chat:connect';

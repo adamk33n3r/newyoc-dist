@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+var UserTest_1;
 const mocha_typescript_1 = require("mocha-typescript");
 const user_1 = require("../src/schemas/user");
 const mongoose = require("mongoose");
@@ -56,4 +58,4 @@ UserTest = UserTest_1 = __decorate([
     mocha_typescript_1.suite,
     __metadata("design:paramtypes", [])
 ], UserTest);
-var UserTest_1;
+//# sourceMappingURL=/mnt/c/dev/subsystem/projects/newyoc/server/server/test/user.spec.js.map

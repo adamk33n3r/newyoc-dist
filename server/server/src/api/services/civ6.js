@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const routing_1 = require("src/decorators/routing");
 const slack_1 = require("src/services/slack");
 const config_1 = require("src/config");
@@ -21,7 +22,7 @@ let Civ6Controller = class Civ6Controller {
         const turnNumber = req.body.value3;
         this.slack.sendMessage(config_1.default.slack.webhook, {
             channel: '#civ6turns',
-            text: `It is now ${playerName}'s turn (${turnNumber}) in ${gameName}`,
+            text: `It is now ${playerName}'s turn (${turnNumber}) in the game ${gameName}`,
         })
             .then((response) => {
             if (response.body === 'ok') {
@@ -40,6 +41,7 @@ let Civ6Controller = class Civ6Controller {
 };
 __decorate([
     routing_1.POST('/'),
+    routing_1.GET('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
@@ -47,5 +49,4 @@ __decorate([
 Civ6Controller = __decorate([
     routing_1.Controller('/civ6')
 ], Civ6Controller);
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new Civ6Controller();

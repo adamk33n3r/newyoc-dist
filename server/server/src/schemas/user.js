@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 exports.userSchema = new mongoose_1.Schema({
     createdAt: Date,
@@ -12,3 +13,4 @@ exports.userSchema.pre('save', (next) => {
     }
     next();
 });
+//# sourceMappingURL=/mnt/c/dev/subsystem/projects/newyoc/server/server/src/schemas/user.js.map

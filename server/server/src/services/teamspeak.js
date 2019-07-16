@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const node_ts_1 = require("node-ts");
 class TeamSpeak {
     constructor(url, onError) {

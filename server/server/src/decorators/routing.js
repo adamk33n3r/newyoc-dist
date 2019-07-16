@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 require("reflect-metadata");
 const DEBUG = false;
@@ -10,9 +11,11 @@ function debug(...args) {
 }
 function camelToKebab(name) {
     return name
+        // Lowercase first character
         .replace(/^([A-Z])/, (matches) => {
         return matches[0].toLowerCase();
     })
+        // Turn rest into kebab
         .replace(/([a-z])([A-Z])/g, (matches) => {
         return matches[0] + '-' + matches[1].toLowerCase();
     });

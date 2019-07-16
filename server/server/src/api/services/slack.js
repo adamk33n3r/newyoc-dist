@@ -8,17 +8,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+const firebase = require("firebase/app");
+require("firebase/firestore");
 const routing_1 = require("src/decorators/routing");
 const util_1 = require("src/decorators/util");
 const teamspeak_1 = require("src/services/teamspeak");
 const slack_1 = require("src/services/slack");
 const config_1 = require("src/config");
+const utils_1 = require("./clink/utils");
+const message_action_1 = require("./clink/interactive/message_action");
+const dialog_submission_1 = require("./clink/interactive/dialog_submission");
+const block_actions_1 = require("./clink/interactive/block_actions");
 let SlackController = class SlackController {
     constructor() {
         this.slack = new slack_1.Slack();
     }
     status(req, res) {
-        const ts = this.initTeamSpeak();
+        const ts = new teamspeak_1.TeamSpeak(config_1.default.teamspeak.url);
         ts.login(config_1.default.teamspeak.username, config_1.default.teamspeak.password)
             .then(() => {
             ts.getOnlineClients()
@@ -45,7 +52,7 @@ let SlackController = class SlackController {
             .catch((err) => res.status(500).send(err));
     }
     sendMessage(req, res) {
-        this.slack.sendMessage(config_1.default.slack.webhook, {
+        this.slack.sendMessage(config_1.default.slack.clink.webhook, {
             channel: req.body.channel || '#tcpi',
             text: req.body.text || 'No text provided',
         })
@@ -79,17 +86,7 @@ let SlackController = class SlackController {
             res.status(500).send('Sides parameter invalid');
         }
     }
-    lenny(req, res) {
-        res.send({
-            response_type: 'in_channel',
-            text: ' ',
-        });
-    }
     sendInvite(req, res) {
-        if (!this.slack) {
-            console.error(this.slack);
-            return res.send(500, 'uh');
-        }
         this.slack.sendInvite(config_1.default.slack.token, req.body.email)
             .then((response) => {
             const body = JSON.parse(response.body);
@@ -106,12 +103,55 @@ let SlackController = class SlackController {
             res.status(500).send();
         });
     }
-    initTeamSpeak() {
-        return new teamspeak_1.TeamSpeak(config_1.default.teamspeak.url);
+    quote(req, res) {
+        const text = req.body.text;
+        const splits = text.split(' ');
+        const matches = splits[0].match(/^<@(\w+)(?:\|(.+?))?>/);
+        const saidBy = matches ? matches[1] : undefined;
+        const quote = splits.slice(1).join(' ');
+        utils_1.launchQuoteDialog(req.body.trigger_id, new Date(), saidBy, quote);
+        res.send();
+    }
+    quotes(req, res) {
+        utils_1.getQuotesBlocks(req.body.team_id, req.body.channel_name).then((blocks) => {
+            res.send({
+                response_type: 'ephemeral',
+                blocks,
+            });
+        });
+    }
+    randomQuote(req, res) {
+        const teamId = req.body.team_id;
+        firebase.firestore().collection(`teams/${teamId}/quotes`).get().then((query) => {
+            const randIdx = Math.floor(Math.random() * query.size);
+            const quote = query.docs[randIdx].data();
+            res.send({
+                response_type: 'in_channel',
+                text: `<@${quote.said_by}>: ${quote.quote}`,
+            });
+        });
+    }
+    interactive(req, res) {
+        const payload = JSON.parse(req.body.payload);
+        switch (payload.type) {
+            case 'message_action':
+                message_action_1.handleMessageAction(payload);
+                break;
+            case 'dialog_submission':
+                dialog_submission_1.handleDialogSubmission(payload);
+                break;
+            case 'block_actions':
+                block_actions_1.handleBlockActions(payload);
+                break;
+            default:
+                break;
+        }
+        res.send();
     }
 };
 __decorate([
-    routing_1.GET(),
+    routing_1.POST(),
+    util_1.VerifySlackSignature(config_1.default.slack.clink.secret),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
@@ -125,18 +165,11 @@ __decorate([
 __decorate([
     routing_1.POST(),
     util_1.Required('text'),
-    util_1.CheckToken('LwPEBbxlGiNTXzXG7Ag92Efo'),
+    util_1.VerifySlackSignature(config_1.default.slack.clink.secret),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SlackController.prototype, "roll", null);
-__decorate([
-    routing_1.POST(),
-    util_1.CheckToken('HEiSGKnFX8aGHXezPxnER2Mg'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
-], SlackController.prototype, "lenny", null);
 __decorate([
     routing_1.POST(),
     util_1.Required('email'),
@@ -144,8 +177,37 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SlackController.prototype, "sendInvite", null);
+__decorate([
+    routing_1.POST(),
+    util_1.Required('text'),
+    util_1.VerifySlackSignature(config_1.default.slack.clink.secret),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SlackController.prototype, "quote", null);
+__decorate([
+    routing_1.POST(),
+    util_1.VerifySlackSignature(config_1.default.slack.clink.secret),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SlackController.prototype, "quotes", null);
+__decorate([
+    routing_1.POST(),
+    util_1.VerifySlackSignature(config_1.default.slack.clink.secret),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SlackController.prototype, "randomQuote", null);
+__decorate([
+    routing_1.POST(),
+    util_1.Required('payload'),
+    util_1.VerifySlackSignature(config_1.default.slack.clink.secret),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SlackController.prototype, "interactive", null);
 SlackController = __decorate([
     routing_1.Controller('/slack')
 ], SlackController);
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new SlackController();

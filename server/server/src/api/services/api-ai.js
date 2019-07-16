@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const routing_1 = require("src/decorators/routing");
 const util_1 = require("src/decorators/util");
 const teamspeak_1 = require("src/services/teamspeak");
@@ -56,5 +57,4 @@ __decorate([
 ApiAIController = __decorate([
     routing_1.Controller('/api-ai')
 ], ApiAIController);
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = new ApiAIController();
